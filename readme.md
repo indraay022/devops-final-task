@@ -29,7 +29,7 @@ ssh-keygen -C indra@local
 Kita lihat sudah terdapat 2 kunci baru yaitu `id_rsa` dan `id_rsa.pub`  
 Selanjutnya kita sisipkan kunci `id_rsa.pub` ke dalam file bernama `authorized_keys`  
 ```
-cat id_rsa.pub>> authorized_keys
+cat id_rsa.pub >> authorized_keys
 ```
 Lalu kita cek isi dari file `authorized_keys`
 ```
