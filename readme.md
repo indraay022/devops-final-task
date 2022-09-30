@@ -26,16 +26,16 @@ ssh-keygen -C indra@local
 ```
 ![Screen Shot 2022-09-30 at 09 00 53](https://user-images.githubusercontent.com/110447286/193175385-9d15c842-5bcc-47a1-8f5d-c04708ffd3fe.png)
 
-Kita lihat sudah terdapat 2 kunci baru yaitu `indra@local` dan `indra@local.pub`  
-Selanjutnya kita sisipkan kunci `indra@local.pub` ke dalam file bernama `authorized_keys`  
+Kita lihat sudah terdapat 2 kunci baru yaitu `id_rsa` dan `id_rsa.pub`  
+Selanjutnya kita sisipkan kunci `id_rsa.pub` ke dalam file bernama `authorized_keys`  
 ```
-cat indra@local.pub >> authorized_keys
+cat id_rsa.pub>> authorized_keys
 ```
 Lalu kita cek isi dari file `authorized_keys`
 ```
 cat authorized_keys
 ```
-Disini bisa kita lihat kunci `indra@local.pub` sudah tertampung pada `authorized_keys`  
+Disini bisa kita lihat kunci `id_rsa.pub` sudah tertampung pada `authorized_keys`  
 ![Screen Shot 2022-09-30 at 09 02 37](https://user-images.githubusercontent.com/110447286/193175478-162d1453-a221-48a3-9839-844483b7d624.png)  
 
 
