@@ -20,11 +20,12 @@ Jika belum ada direktori `.ssh` maka buat direktori baru terlebih dahulu
 ```
 mkdir .ssh
 ```
-Kita buat kunci ssh dengan nama indra@local  
+Kita buat kunci ssh dengan kredensial indra@local  
 ```
-ssh-keygen
+ssh-keygen -C indra@local
 ```
-Lalu kita isikan nama kunci kita sebagai `indra@local`  
+![Screen Shot 2022-09-30 at 09 00 53](https://user-images.githubusercontent.com/110447286/193175385-9d15c842-5bcc-47a1-8f5d-c04708ffd3fe.png)
+
 Kita lihat sudah terdapat 2 kunci baru yaitu `indra@local` dan `indra@local.pub`  
 Selanjutnya kita sisipkan kunci `indra@local.pub` ke dalam file bernama `authorized_keys`  
 ```
@@ -35,6 +36,8 @@ Lalu kita cek isi dari file `authorized_keys`
 cat authorized_keys
 ```
 Disini bisa kita lihat kunci `indra@local.pub` sudah tertampung pada `authorized_keys`  
+![Screen Shot 2022-09-30 at 09 02 37](https://user-images.githubusercontent.com/110447286/193175478-162d1453-a221-48a3-9839-844483b7d624.png)  
+
 
 Selanjutnya kita buat file baru bernama `config`  
 ```
@@ -42,6 +45,19 @@ pico config
 ```
 Didalam file config kita buat alias dari 3 server yang sudah kita buat  
 Hal ini digunakan untuk memudahkan kita dalam melakukan remote menggunakan ssh  
+```
+Host indra-app
+        HostName 103.172.204.148
+        User indra
+
+Host indra-monitor
+        HostName 103.174.114.139
+        User indra
+
+Host indra-nginx
+        HostName 103.174.115.209
+        User indra
+```
 Jadi kita tidak perlu memasukkan username dan ip address saat ingin berpindah remote  
 Kita cukup menggunakan aliasnya saja
 
@@ -59,32 +75,28 @@ scp .ssh/* indra-nginx:~/.ssh
 ```
 scp .ssh/* indra-monitor:~/.ssh
 ```
+![Screen Shot 2022-09-30 at 09 08 46](https://user-images.githubusercontent.com/110447286/193175536-3b375bb7-08d8-4e21-b752-7a2cc39eb6b9.png)  
+![Screen Shot 2022-09-30 at 09 09 08](https://user-images.githubusercontent.com/110447286/193175545-2a16eae3-e412-4dda-bf57-8aca5ca61c4c.png)  
+![Screen Shot 2022-09-30 at 09 09 32](https://user-images.githubusercontent.com/110447286/193175560-d3eec9b4-7232-48d7-a916-f9e20b178868.png)  
+
 Setelah itu kita coba login ke server dengan menggunakan kunci dan alias  
 ```
-ssh -i .ssh/indra@local indra-app
+ssh indra-app
 ```
+![Screen Shot 2022-09-30 at 09 10 01](https://user-images.githubusercontent.com/110447286/193175598-7850e25c-63f7-4839-9860-32d12d6a99b3.png)  
+
 ```
-ssh -i .ssh/indra@local indra-nginx
+ssh indra-nginx
 ```
+![Screen Shot 2022-09-30 at 09 10 39](https://user-images.githubusercontent.com/110447286/193175608-6ac42990-6bca-4b7d-82d5-f3edfdfe7509.png)  
+
 ```
-ssh -i .ssh/indra@local indra-monitor
+ssh indra-monitor
 ```
+![Screen Shot 2022-09-30 at 09 10 53](https://user-images.githubusercontent.com/110447286/193175622-1dd0b28e-65f2-4879-a7b2-5086234cc65c.png)  
+
 Bisa kita lihat bahwa kita dapat login ke server tanpa password dan tanpa perlu menyebutkan username dan ip addess server  
-
-# Setup SSH (id_rsa & id_rsa.pub)
-Di task kali ini saya menggunakan ssh key default yaitu `id_rsa` dan `id_rsa.pub` karena lebih mudah (tidak perlu specify custom key)  
-Jadi penggunaan command ssh akan lebih simple yaitu menjadi
-```
-ssh <alias>
-```
-
-Pada local kita generate ssh key baru  
-```
-ssh-keygen
-```
-maka akan ada 2 file baru di direktori `.ssh` yaitu `id_rsa` (private key) dan `id_rsa.pub` (public key)  
-
-Sama seperti pada custom key saya akan menyisipkan puclic key `id_rsa.pub` ke dalam `authorized_keys` kemudian saya mentransfer ulang `authorized_keys`, `id_rsa` dan `id_rsa.pub` ke 3 server
+![Screen Shot 2022-09-30 at 09 11 26](https://user-images.githubusercontent.com/110447286/193175674-d4b75b68-0351-4cd4-958b-fd9c929bb76b.png)  
 
 # Membuat User
 untuk membuat user baru pada semua server kita perlu menggunakan ansible untuk meng-otomasi perintah ke dalam server  
@@ -176,7 +188,8 @@ Kita tampilkan isi dari `.ssh/id_rsa.pub` lalu kita copy ke dalam clipboard
 ```
 cat .ssh/id_rsa.pub
 ```
-esesha
+![Screen Shot 2022-09-30 at 09 16 38](https://user-images.githubusercontent.com/110447286/193175833-dfdfdb21-d0d5-4bbb-83e6-75bdc5edcd43.png)  
+
 
 Masuk ke https://github.com/settings/keys  
 Klik `SSH and GPG keys`  
@@ -193,11 +206,13 @@ Key
 Pastekan isi dari clipboard  
 
 Jika selesai, Klik `Add SSH Key`  
-esesha
+![Screen Shot 2022-09-30 at 09 18 32](https://user-images.githubusercontent.com/110447286/193176143-7d41c4cc-41c7-4eca-914f-eb170ceb5ad7.png)
+
 Selanjutnya kita akan diminta untuk memasukkan password sebagai konfirmasi  
 ![Screen Shot 2022-09-27 at 08 53 52](https://user-images.githubusercontent.com/110447286/193119202-d92a22e1-3b94-41df-8808-474227df4bcd.png)  
 
 Bisa kita lihat disini SSH key kita sudah terdaftar  
+![Screen Shot 2022-09-30 at 09 19 22](https://user-images.githubusercontent.com/110447286/193176172-d0b3a64d-8194-4e42-95fb-8a749473f1ad.png)  
 
 Pada server kita tes koneksi SSH dengan perintah
 ```
@@ -948,3 +963,155 @@ Klik `Save and Finish`
 
 Klik `Start using Jenkins`  
 ![Screen Shot 2022-09-28 at 19 29 14](https://user-images.githubusercontent.com/110447286/193124602-d826dee2-36cb-451d-ae20-6877fd101d94.png)  
+
+Login ke Jenkins  
+![Screen Shot 2022-09-30 at 09 22 11](https://user-images.githubusercontent.com/110447286/193176617-a634ba90-4efe-417b-8ef0-73c7e8da6c5d.png)  
+
+Untuk awal-awal kita manage plugin terlebih dahulu  
+Plugins yang perlu kita install yaitu `Publish over SSH`, `SSH agent`, `Discord notifier`  
+
+Selanjutnya kita Manage Credential  
+![Screen Shot 2022-09-28 at 20 37 19](https://user-images.githubusercontent.com/110447286/193176959-d7a24bd2-d02b-46a7-92db-a96e8adec23b.png)  
+
+Add credential  
+![Screen Shot 2022-09-28 at 20 37 34](https://user-images.githubusercontent.com/110447286/193177004-cf138327-c047-45ca-a940-d4f3f83d95fc.png)  
+
+Kita buat kredensial indra-app menggunakan private SSH key 
+![Screen Shot 2022-09-28 at 20 39 33](https://user-images.githubusercontent.com/110447286/193177094-81bd7bb0-19e7-4a66-b6cc-1e3795a77612.png)  
+Kita copy isi dari file `id_rsa`  
+![Screen Shot 2022-09-30 at 09 30 23](https://user-images.githubusercontent.com/110447286/193177445-075bad40-ef9c-46cb-881d-c7a58fad414d.png)  
+
+Kita paste kan dari file `id_rsa` pada kolom key  
+![Screen Shot 2022-09-28 at 20 39 18](https://user-images.githubusercontent.com/110447286/193177505-abe55753-d4fd-4263-872f-b42409012d5e.png)  
+
+Disini kita sudah membuat kredensial baru `indra-app`  
+![Screen Shot 2022-09-28 at 20 39 45](https://user-images.githubusercontent.com/110447286/193177591-c0d84085-43d2-4807-b012-a7cdae8cd6bd.png)  
+
+Lalu kita buat kredensial baru untuk GitHub  
+Add Credential  
+![Screen Shot 2022-09-28 at 20 42 54](https://user-images.githubusercontent.com/110447286/193177696-b175ebb8-98ba-45bf-beaa-59bac0dae0e8.png)  
+![Screen Shot 2022-09-28 at 20 44 08](https://user-images.githubusercontent.com/110447286/193177778-86a443a6-c051-48c1-98ed-49e7ff26f7d5.png)  
+![Screen Shot 2022-09-28 at 20 44 16](https://user-images.githubusercontent.com/110447286/193177788-d58123a6-f7e2-4348-b3ac-1c110d4c8c3a.png)  
+
+Selanjutnya kita Buat Server Discord baru  
+Kita buat channel untuk pemberitahuan Jenkins  
+![Screen Shot 2022-09-29 at 02 41 09](https://user-images.githubusercontent.com/110447286/193180181-43f4bc33-2a87-46c5-9760-4c9bc4c9749d.png)  
+
+Kita klik Server Settings > Integration  
+![Screen Shot 2022-09-29 at 02 16 36](https://user-images.githubusercontent.com/110447286/193180047-0c24a025-dac6-410b-b8c1-f92c6a326a7e.png)  
+
+Create Webhook  
+![Screen Shot 2022-09-29 at 02 16 45](https://user-images.githubusercontent.com/110447286/193180085-282809b2-9108-4754-8cf9-a21b84e46892.png)  
+
+Copy Webhook URL  
+![Screen Shot 2022-09-29 at 02 42 51](https://user-images.githubusercontent.com/110447286/193180344-8ff7aee2-4719-4fd7-9368-ce1bbf108e37.png)  
+Kita sisipkan URL tersebut pada Jenkinsfile  
+
+Selanjutnya kita bisa mulai membuat Pipeline baru untuk `literature-backend`  
+![Screen Shot 2022-09-28 at 20 53 12](https://user-images.githubusercontent.com/110447286/193178619-afe0384c-3ac7-4f2c-bb35-a1f15cc424a8.png)  
+![Screen Shot 2022-09-28 at 20 54 46](https://user-images.githubusercontent.com/110447286/193178639-85ddd8e4-71b9-47f3-9341-a214de24d5b3.png)  
+![Screen Shot 2022-09-28 at 20 54 52](https://user-images.githubusercontent.com/110447286/193178655-41a3804e-cba1-4916-a003-035830b1bf9c.png)  
+![Screen Shot 2022-09-28 at 20 55 02](https://user-images.githubusercontent.com/110447286/193178679-18ce5ec4-356e-426b-a603-c4269fe2c1e2.png)  
+
+Pada app kita buat file bernama `Jenkinsfile`  
+![Screen Shot 2022-09-28 at 21 05 58](https://user-images.githubusercontent.com/110447286/193178774-3462f8aa-af83-411b-ac93-808ed06c068e.png)  
+```
+def server = "indra@103.172.204.148"
+def credential = "indra-app"
+def workdir = "/home/indra/literature-backend"
+def imagename = "indraay022/literature-backend"
+def branch = "Production"
+
+pipeline {
+    agent any
+
+    stages {
+        stage('Pull from Github') {
+            steps {
+                sshagent(credentials: ["${credential}"]) {
+                    sh """
+                        ssh -o StrictHostKeyChecking=no ${server} << EOF
+                        cd ${workdir}
+                        git pull origin ${branch}
+                    """
+                }
+            }
+        }
+            
+        stage('Rebuild docker image') {
+            steps {
+                sshagent(credentials: ["${credential}"]) {
+                    sh """
+                        ssh -o StrictHostKeyChecking=no ${server} << EOF
+                        cd ${workdir}
+                        docker build -t ${imagename}:${env.BUILD_ID} .
+                    """
+                }
+            }
+        }
+            
+        stage('Deploy image into container') {
+            steps {
+                sshagent(credentials: ["${credential}"]) {
+                    sh """
+                        ssh -o StrictHostKeyChecking=no ${server} << EOF
+                        cd ${workdir}
+                        docker compose down
+                        docker rmi ${imagename}:latest
+                        docker tag ${imagename}:${env.BUILD_ID} ${imagename}:latest
+                        docker compose up -d
+                    """
+                }
+            }
+        }
+
+        stage('Push latest image to HubDocker') {
+            steps {
+                sshagent(credentials: ["${credential}"]) {
+                    sh """
+                    ssh -o StrictHostKeyChecking=no ${server} << EOF
+                    docker image push ${imagename}:latest
+                    """
+		        }
+            }
+        }
+        stage ('Sending notification to Discord'){
+            steps{
+                echo 'Test to Discord'
+		        discordSend description: "Build ke ${env.BUILD_ID} berhasil" , footer: '', image: '', link: '', result: '', scmWebUrl: '', thumbnail: '', title: 'Latest build Succeeded', webhookURL: 'https://discord.com/api/webhooks/1024767914458484777/XPFNjRBo565OXAqYw7sPVAm5rPmPosaTNi2ZyW1JATS_Ef4CMooL_ZgftXnxmMdYjX3i'
+            }
+        }
+    }
+}
+
+```
+
+Lalu kita commit perubahan  
+![Screen Shot 2022-09-28 at 21 06 46](https://user-images.githubusercontent.com/110447286/193179053-754a6ffb-4ca0-4eeb-b684-c6ea996a9298.png)  
+
+Kita Push ke dalam Github  
+![Screen Shot 2022-09-28 at 21 08 45](https://user-images.githubusercontent.com/110447286/193179114-3c93a823-e567-4baa-8a34-c657294a6a34.png)  
+
+Buat API key baru di Profile > Configure  
+Klik add new token  
+![Screen Shot 2022-09-29 at 01 43 11](https://user-images.githubusercontent.com/110447286/193179620-5025b285-2636-4ca4-aa82-6635cca05f09.png)  
+Generate
+![Screen Shot 2022-09-29 at 01 43 19](https://user-images.githubusercontent.com/110447286/193179672-ba80481c-e465-4e26-9512-6587697f75fd.png)  
+Copy Token  
+![Screen Shot 2022-09-29 at 01 43 31](https://user-images.githubusercontent.com/110447286/193179711-68464229-5995-4379-9292-94dd3a9947a7.png)  
+
+Pada Github repository `literature-backend` kita setting agar agar dapat men-trigger build saat terjadi push pada repository  
+Kita add webhook  
+![Screen Shot 2022-09-29 at 01 40 43](https://user-images.githubusercontent.com/110447286/193179364-0f100df4-48d9-4afc-9163-5019098a280c.png)  
+Masukkan password github
+![Screen Shot 2022-09-29 at 01 40 59](https://user-images.githubusercontent.com/110447286/193179384-4ba2fa0b-61c8-4541-a115-dc2fcc010bfd.png)  
+
+Kita buat webhook baru  
+![Screen Shot 2022-09-29 at 01 44 12](https://user-images.githubusercontent.com/110447286/193179813-36e0440c-0e6f-4784-a49d-7d9ef55134f5.png)  
+![Screen Shot 2022-09-29 at 01 44 18](https://user-images.githubusercontent.com/110447286/193179841-8d4c27b3-02a5-4c41-9a72-b7e2e0b860f9.png)  
+![Screen Shot 2022-09-29 at 01 45 10](https://user-images.githubusercontent.com/110447286/193179887-48a67112-9e69-4298-b257-4ca2c6ea0175.png)  
+
+Disini kita sudah bisa mentrigger Jenkins melalui github push  
+![Screen Shot 2022-09-29 at 03 02 08](https://user-images.githubusercontent.com/110447286/193180610-3473050d-a4d2-4a0f-acc4-68bfeca442e7.png)  
+![Screen Shot 2022-09-29 at 03 02 19](https://user-images.githubusercontent.com/110447286/193180632-eec2f981-614b-4040-9a04-56ae2cba401b.png)  
+
